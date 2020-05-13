@@ -1,5 +1,5 @@
 FROM adtiming/ombuilder as builder
-ARG BUILDER_URL="https://github.com/AdTiming/OM-Server.git"
+ARG BUILDER_URL="https://github.com/xuanxinhuiqing/OM-Server.git"
 ARG BUILDER_DIR="OM-Server"
 RUN git clone ${BUILDER_URL} && \
     cd ${BUILDER_DIR} && \
