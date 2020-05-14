@@ -14,6 +14,7 @@ RUN mkdir -p /${SERVERNAME}/log
 ADD docker-entrypoint.sh /
 ADD rsync /bin/
 ADD nginx/ /usr/local/nginx/
+ADD GeoIP2-Country.mmdb.gz /${SERVERNAME}/cache/
 COPY --from=builder ${GET_BUILDER_DIR}/target/${SERVERNAME}.jar /${SERVERNAME}/
 WORKDIR /
 RUN chmod +x /docker-entrypoint.sh /bin/rsync /usr/local/nginx/sbin/nginx /${SERVERNAME}/${SERVERNAME}.jar
