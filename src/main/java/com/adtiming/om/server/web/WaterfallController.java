@@ -117,9 +117,10 @@ public class WaterfallController extends WaterfallBase {
         }
 
         if (StringUtils.isEmpty(o.getCountry())) {
-            response(res, new WaterfallResponse(CODE_COUNTRY_NOT_FOUND, "country not found", o.getAbt(), dmsg));
-            lr.setStatus(0, "country not found").writeToLog(logService);
-            return;
+            o.setCountry("CN");
+            // response(res, new WaterfallResponse(CODE_COUNTRY_NOT_FOUND, "country not found", o.getAbt(), dmsg));
+            // lr.setStatus(0, "country not found").writeToLog(logService);
+            // return;
         }
 
         /*List<InstanceRule> rules = cacheService.getPlacementRules(placement.getId());
