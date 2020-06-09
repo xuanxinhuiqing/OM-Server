@@ -1,7 +1,7 @@
 app:
   env: prod
   dcenter: 1
-  dtask: 172.31.9.92
+  dtask: 72.31.13.178
 
 logging:
   config: classpath:log4j2-prod.xml
