@@ -61,6 +61,7 @@ public class Application {
 
             String url = String.format("http://%s:19012/snode/config/get?nodeid=%s&dcenter=%d",
                     cfg.getDtask(), nodeid, cfg.getDcenter());
+            LOG.info("url -> {} ", url);
             NodeConfig nc = objectMapper.readValue(new URL(url), NodeConfig.class);
             cfg.setSnode(nc.id);
             LOG.info("OM-Server init, snode: {}, dc: {}, dtask: {}, {}",
