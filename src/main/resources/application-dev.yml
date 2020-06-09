@@ -1,7 +1,7 @@
 app:
   env: dev
   dcenter: 1
-  dtask: 72.31.13.178
+  dtask: 172.31.13.178
 
 logging:
   config: classpath:log4j2-dev.xml
