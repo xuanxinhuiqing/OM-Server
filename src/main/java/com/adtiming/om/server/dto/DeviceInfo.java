@@ -18,6 +18,12 @@ public interface DeviceInfo {
     int getPlat();
 
     String getDid();
+    
+    // ADDCODE aaron.song
+    String getImei();
+    
+    String getMdid();
+    // 
 
     int getDtype();
 

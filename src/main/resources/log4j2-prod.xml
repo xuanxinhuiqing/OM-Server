@@ -63,12 +63,12 @@
 
     <Loggers>
 
-        <Root level="debug">
+        <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
 
         <Logger name="com.adtiming.om" level="debug"/>
-        <Logger name="org.springframework.boot.web.embedded" level="debug"/>
+        <Logger name="org.springframework.boot.web.embedded" level="info"/>
         <Logger name="org.apache.catalina.connector.CoyoteAdapter" level="fatal"/>
 
         <Logger name="om.lr" level="info" additivity="false">

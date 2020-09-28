@@ -139,7 +139,7 @@ public class InitResponse {
             if (allowHb && !hasHb.get() && i.isHeadBidding()) {
                 hasHb.set(hb = true);
             }
-            pIns.add(new MInstance(i, hb));
+            pIns.add(new MInstance(i, hb, 8));
         }
     }
 
@@ -274,10 +274,16 @@ public class InitResponse {
     public static class MInstance {
         private Instance o;
         private boolean hb;
+        private int c;
 
-        MInstance(Instance o, boolean hb) {
+        MInstance(Instance o, boolean hb, int c) {
             this.o = o;
             this.hb = hb;
+            this.c = c;
+        }
+        
+        public int getC() {
+        	return 10;
         }
 
         public String getK() {
