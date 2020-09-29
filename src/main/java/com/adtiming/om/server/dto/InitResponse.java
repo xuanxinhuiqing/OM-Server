@@ -139,7 +139,7 @@ public class InitResponse {
             if (allowHb && !hasHb.get() && i.isHeadBidding()) {
                 hasHb.set(hb = true);
             }
-            pIns.add(new MInstance(i, hb, 8));
+            pIns.add(new MInstance(i, hb, 0)); // EDITCODE aaron.song
         }
     }
 
@@ -283,7 +283,7 @@ public class InitResponse {
         }
         
         public int getC() {
-        	return 10;
+        	return c;
         }
 
         public String getK() {
