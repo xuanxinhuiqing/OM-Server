@@ -100,16 +100,16 @@ public class GeoService {
     }
 
     private String getClientIP(HttpServletRequest req) {
-//        String clientIP = req.getHeader("X-Real-IP");
-//        if (clientIP == null) {
-//            clientIP = req.getRemoteAddr();
-//        }
-//        return clientIP;
-        String xff = req.getHeader("X-Forwarded-For");
-        if (StringUtils.isNotBlank(xff)) {
-            return StringUtils.trim(xff.split(",")[0]);
+        String clientIP = req.getHeader("X-Real-IP");
+        if (clientIP == null) {
+            clientIP = req.getRemoteAddr();
         }
-        return ""; // remote_ip;
+        return clientIP;
+//        String xff = req.getHeader("X-Forwarded-For");
+//        if (StringUtils.isNotBlank(xff)) {
+//            return StringUtils.trim(xff.split(",")[0]);
+//        } else
+//            return remote_ip;
     }
 
     private String getCountry(AbstractCountryResponse res) {
