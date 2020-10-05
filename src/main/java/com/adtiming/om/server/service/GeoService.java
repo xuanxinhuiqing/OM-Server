@@ -101,16 +101,18 @@ public class GeoService {
 
     private String getClientIP(HttpServletRequest req) {
     	LOG.debug("aaron.song ip Addr -> " + getIpAddr(req));
-        String clientIP = req.getHeader("X-Real-IP");
-        if (clientIP == null) {
-            clientIP = req.getRemoteAddr();
-        }
-        return clientIP;
+//        String clientIP = req.getHeader("X-Real-IP");
+//        if (clientIP == null) {
+//            clientIP = req.getRemoteAddr();
+//        }
+//        return clientIP;
+    	
 //        String xff = req.getHeader("X-Forwarded-For");
 //        if (StringUtils.isNotBlank(xff)) {
 //            return StringUtils.trim(xff.split(",")[0]);
 //        } else
 //            return remote_ip;
+    	return getIpAddr(req);
     }
     
     // ADDCODE aaron.song
