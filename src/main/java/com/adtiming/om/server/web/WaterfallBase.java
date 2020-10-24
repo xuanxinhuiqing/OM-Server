@@ -5,6 +5,7 @@ import com.adtiming.om.server.service.AppConfig;
 import com.adtiming.om.server.service.CacheService;
 import com.adtiming.om.server.service.GeoService;
 import com.adtiming.om.server.util.Compressor;
+import com.adtiming.om.server.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class WaterfallBase extends BaseController {
 
@@ -41,9 +41,10 @@ public class WaterfallBase extends BaseController {
             o.setPlat(plat);
             o.setUa(ua);
             o.setReqHost(reqHost);
-            o.setGeo(geoService.getGeoData(req));
+            o.setGeo(geoService.getGeoData(req, o));
             o.setAppConfig(cfg);
-            o.processBid(cacheService);
+            o.processBidPrices(cacheService);
+            o.setMtype(Util.getModelType(plat, o.getModel(), ua));
         } catch (Exception e) {
             LOG.warn("wf decode fail v{}", apiv, e);
             return null;
@@ -63,23 +64,20 @@ public class WaterfallBase extends BaseController {
         return removeAdnIds;
     }
 
-    List<Integer> matchDev(Integer devDevicePubId, Placement p, CacheService cacheService) {
+    List<Instance> matchDev(Integer devDevicePubId, Placement p, CacheService cacheService) {
         if (devDevicePubId != null) {
             // When devDevicePubId is 0, all apps are remediated in test mode
             if (devDevicePubId == 0 || devDevicePubId == p.getPublisherId()) {
                 Integer adnId = cacheService.getDevAppAdnId(p.getPubAppId());
                 if (adnId != null) {
-                    List<Instance> ins = cacheService.getPlacementAdnInstances(p.getId(), adnId);
-                    if (ins.isEmpty())
-                        return null;
-                    return ins.stream().map(Instance::getId).collect(Collectors.toList());
+                    return cacheService.getPlacementAdnInstances(p.getId(), adnId);
                 }
             }
         }
         return null;
     }
 
-    Boolean matchPlacement(WaterfallRequest o, Placement p) {
+    boolean matchPlacement(WaterfallRequest o, Placement p) {
         if (p.isBlockSdkVersion(o.getSdkv())) {
             return false;
         }
@@ -111,24 +109,14 @@ public class WaterfallBase extends BaseController {
         return true;
     }
 
-    InstanceRule getMatchedRule(CacheService cacheService, List<InstanceRule> rules, WaterfallRequest o, boolean DEBUG, List<CharSequence> dmsg) {
+    InstanceRule getMatchedRule(List<InstanceRule> rules, WaterfallRequest o) {
         if (rules == null || rules.isEmpty())
             return null;
-        InstanceRule matchedRule = null;
         for (InstanceRule rule : rules) {
-            Segment segment = cacheService.getSegment(rule.getSegmentId(), o.getCountry());
-            if (segment == null) {
-                if (DEBUG) {
-                    dmsg.add(String.format("segment not find, ruleId:%d, segmentId:%d", rule.getId(), rule.getSegmentId()));
-                }
-                continue;
-            }
-            if (o.getAbt() == rule.getAbt().getNumber() && segment.isMatched(o.getCountry(), o.getContype(), o.getBrand(), o.getModel(), o.getIap(), o.getImprTimes())) {
-                if (matchedRule == null || rule.getPriority() < matchedRule.getPriority()) {
-                    matchedRule = rule;
-                }
+            if (rule.isMatched(o)) {
+                return rule;
             }
         }
-        return matchedRule;
+        return null;
     }
 }

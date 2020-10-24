@@ -75,14 +75,14 @@ public class HBController extends WaterfallBase {
         lr.setPlacement(placement);
 
         o.setAdType(placement.getAdTypeValue());
-        o.setAbt(cacheService.getAbTestMode(placement.getId(), o));
+//        o.setAbt(cacheService.getAbTestMode(placement.getId(), o));
 
         if (DEBUG) {
             dmsg.add(String.format("request ip:%s, country:%s", o.getIp(), o.getCountry()));
-            if (o.getAbt() > 0) {
-                dmsg.add("Placement ABTest status: On");
-                dmsg.add("Placement Device ABTest Mode:" + CommonPB.ABTest.forNumber(o.getAbt()));
-            }
+//            if (o.getAbt() > 0) {
+//                dmsg.add("Placement ABTest status: On");
+//                dmsg.add("Placement Device ABTest Mode:" + CommonPB.ABTest.forNumber(o.getAbt()));
+//            }
         }
         Integer devDevicePubId = cacheService.getDevDevicePub(o.getDid());
         // dev device uses the configured abTest mode
@@ -125,17 +125,13 @@ public class HBController extends WaterfallBase {
     private List<Integer> getIns(Integer devDevicePubId, WaterfallRequest o, Placement p,
                                  List<CharSequence> dmsg, boolean DEBUG) {
         //dev mode
-        List<Integer> devIns = matchDev(devDevicePubId, p, cacheService);
+        List<Instance> devIns = matchDev(devDevicePubId, p, cacheService);
         if (devIns != null && !devIns.isEmpty()) {
-            List<Integer> hbList = null;
-            for (int iid : devIns) {
-                Instance ins = cacheService.getInstanceById(iid);
-                if (ins == null) continue;
-                if (hbList == null)
-                    hbList = new ArrayList<>();
-                hbList.add(iid);
+            List<Integer> hbList = new ArrayList<>();
+            for (Instance ins : devIns) {
+                hbList.add(ins.getId());
             }
-            if (hbList != null && hbList.size() > 1) {// Randomly return one in dev mode
+            if (hbList.size() > 1) {// Randomly return one in dev mode
                 return Collections.singletonList(hbList.get(ThreadLocalRandom.current().nextInt(hbList.size())));
             }
             return hbList;
@@ -146,16 +142,14 @@ public class HBController extends WaterfallBase {
         }
 
         List<InstanceRule> rules = cacheService.getCountryRules(p.getId(), o.getCountry());
-        InstanceRule matchedRule = getMatchedRule(cacheService, rules, o, DEBUG, dmsg);
+        InstanceRule matchedRule = getMatchedRule(rules, o);
 
-        int segmentId = matchedRule != null ? matchedRule.getSegmentId() : 0;
         if (DEBUG) {
             if (matchedRule != null) {
                 dmsg.add("hit rule:" + matchedRule.getId());
             } else {
                 dmsg.add("miss rule");
             }
-            dmsg.add("hit segment:" + segmentId);
         }
 
         List<AdNetworkApp> adnApps = cacheService.getAdnApps(p.getPubAppId());

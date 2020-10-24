@@ -68,7 +68,7 @@ do
         continue
     fi
     if [[ $env_var =~ ^OMYML_ ]]; then
-        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ -)
+        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' )
         if [[ ${item_name} = "dbaddress" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
             sed -i "/url/s/127.0.0.1/${!env_var}/g" ${CONFFILE}/application-loc.yml
@@ -83,7 +83,7 @@ do
     fi
 
     if [[ $env_var =~ ^OMSERVER_ ]]; then
-        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ - )
+        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' )
         if [[ ${item_name} = "mountpath" ]]; then
             loginfo_note "[Cloud Storage] Link ${!env_var}/${CONFFILE}/data to /${CONFFILE}/data"
             if [[ -d /${CONFFILE}/data ]];then
@@ -107,7 +107,7 @@ do
             if [[ -d /usr/local/nginx/https ]];then
                 rm -fr /usr/local/nginx/https
             fi
-            ln -sf ${!env_var}/${CONFFILE}/log  /usr/local/nginx/https
+            ln -sf ${!env_var}/${CONFFILE}/https  /usr/local/nginx/https
 
             continue
         fi 

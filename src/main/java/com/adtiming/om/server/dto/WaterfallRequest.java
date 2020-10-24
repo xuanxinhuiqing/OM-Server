@@ -4,6 +4,7 @@
 package com.adtiming.om.server.dto;
 
 import com.adtiming.om.server.service.CacheService;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,15 +17,17 @@ public class WaterfallRequest extends CommonRequest {
     private float iap;     //  IAP, inAppPurchase
     private int imprTimes; //  Number of impressions of this placement within 24 hours
     private int act;       //  Load request trigger type, [1:init,2:interval,3:adclose,4:manual]
-    private List<BidResponse> bidResponses;
-    private Map<Integer, Float> bid = Collections.emptyMap();
-
+    private List<BidPrice> bid;
+    private List<S2SBidderToken> bids2s;
+    private List<InstanceLoadStatus> ils;
     private String country;
 
     // not from json
     // set by api controller
     private int adType;
     private int abt; // abTest
+    private Map<Integer, Float> bidPriceMap = Collections.emptyMap();
+    private Map<Integer, InstanceLoadStatus> instanceLoadStatusMap = Collections.emptyMap();
 
     public int getPid() {
         return pid;
@@ -74,16 +77,31 @@ public class WaterfallRequest extends CommonRequest {
         this.abt = abt;
     }
 
-    public Float getBid(int instanceId) {
-        return bid.get(instanceId);
+    public void setBid(List<BidPrice> bid) {
+        this.bid = bid;
     }
 
-    public Map<Integer, Float> getBid() {
-        return bid;
+    public void setBids2s(List<S2SBidderToken> bids2s) {
+        this.bids2s = bids2s;
     }
 
-    public void setBid(List<BidResponse> bidResponses) {
-        this.bidResponses = bidResponses;
+    public List<S2SBidderToken> getBids2s() {
+        return bids2s;
+    }
+
+    public Float getBidPrice(int instanceId) {
+        return bidPriceMap.get(instanceId);
+    }
+
+    public void setBidPrice(int instanceId, float price) {
+        if (Collections.EMPTY_MAP == bidPriceMap) {
+            bidPriceMap = new HashMap<>();
+        }
+        bidPriceMap.put(instanceId, price);
+    }
+
+    public Map<Integer, Float> getBidPriceMap() {
+        return bidPriceMap;
     }
 
     public void setAdType(int adType) {
@@ -97,18 +115,51 @@ public class WaterfallRequest extends CommonRequest {
     /**
      * Handle bid currency unit conversion and put it in the map
      */
-    public void processBid(CacheService cs) {
-        if (bidResponses == null || bidResponses.isEmpty())
+    public void processBidPrices(CacheService cs) {
+        if (bid == null || bid.isEmpty())
             return;
-        this.bid = new HashMap<>(bidResponses.size());
-        for (BidResponse b : bidResponses) {
-            this.bid.put(b.iid, cs.getUsdMoney(b.cur, b.price));
+        this.bidPriceMap = new HashMap<>(bid.size());
+        for (BidPrice b : bid) {
+            this.bidPriceMap.put(b.iid, cs.getUsdMoney(b.cur, b.price));
         }
     }
 
-    public static class BidResponse {
+    public void setIls(List<InstanceLoadStatus> ils) {
+        this.ils = ils;
+        if (!CollectionUtils.isEmpty(ils)) {
+            this.instanceLoadStatusMap = new HashMap<>(ils.size());
+            for (InstanceLoadStatus i : ils) {
+                this.instanceLoadStatusMap.put(i.iid, i);
+            }
+        }
+    }
+
+    public Map<Integer, InstanceLoadStatus> getInstanceLoadStatus() {
+        return instanceLoadStatusMap;
+    }
+
+    public static class BidPrice {
         public int iid;
         public float price;
         public String cur;
+    }
+
+    public static class S2SBidderToken {
+        public int iid;
+        public String token;
+
+        // not from json
+        public int adn;
+        public String appId;
+        public String pkey;
+        public String endpoint;
+    }
+
+    public static class InstanceLoadStatus {
+        public int iid;
+        public long lts;
+        public int dur;
+        public String code;
+        public String msg;
     }
 }

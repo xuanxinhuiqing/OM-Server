@@ -3,12 +3,16 @@
 
 package com.adtiming.om.server.web;
 
-import com.adtiming.om.server.dto.*;
+import com.adtiming.om.server.dto.InitRequest;
+import com.adtiming.om.server.dto.InitResponse;
+import com.adtiming.om.server.dto.LrRequest;
+import com.adtiming.om.server.dto.PublisherApp;
 import com.adtiming.om.server.service.AppConfig;
 import com.adtiming.om.server.service.CacheService;
 import com.adtiming.om.server.service.GeoService;
 import com.adtiming.om.server.service.LogService;
 import com.adtiming.om.server.util.Compressor;
+import com.adtiming.om.server.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +61,6 @@ public class InitController extends BaseController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("appKey invaild");
         }
 
-        GeoData geo = geoService.getGeoData(req);
         InitRequest o;
         try {
             o = objectMapper.readValue(Compressor.gunzip2s(data), InitRequest.class);
@@ -65,11 +68,12 @@ public class InitController extends BaseController {
             o.setApiv(version);
             o.setPlat(plat);
             o.setSdkv(sdkv);
-            o.setGeo(geo);
+            o.setGeo(geoService.getGeoData(req, o));
             o.setUa(ua);
             o.setReqHost(reqHost);
             o.setAppConfig(cfg);
             o.setPubApp(pubApp);
+            o.setMtype(Util.getModelType(plat, o.getModel(), ua));
         } catch (Exception e) {
             LOG.warn("init decode fail v{}", version, e);
             return ResponseEntity.badRequest().body("decode fail");
