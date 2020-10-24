@@ -74,9 +74,9 @@ public class WaterfallController extends WaterfallBase {
         LrRequest lr = o.copyTo(new LrRequest());
         lr.setType(LrRequest.TYPE_WATERFALL_REQUEST);
 
-        Placement placement = cacheService.getPlacement(o.getPid());
+        Placement placement = cacheService.getPlacement(o.getPid()); // ADDCOMMENT aaron.song getPid -> PlacementID 广告位ID
         if (placement == null) {
-            response(res, new WaterfallResponse(CODE_PLACEMENT_INVALID, "placement invalid", CommonPB.ABTest.None_VALUE, dmsg));
+            response(res, new WaterfallResponse(CODE_PLACEMENT_INVALID, "placement invalid", CommonPB.ABTest.None_VALUE, dmsg)); // ADDCOMMENT aaron.song -> 广告位无效
             lr.setStatus(0, "placement invalid").writeToLog(logService);
             return;
         }
@@ -111,7 +111,7 @@ public class WaterfallController extends WaterfallBase {
 
         PublisherApp pubApp = cacheService.getPublisherApp(placement.getPubAppId());
         if (pubApp == null) {
-            response(res, new WaterfallResponse(CODE_PUB_APP_INVALID, "app invalid", o.getAbt(), dmsg));
+            response(res, new WaterfallResponse(CODE_PUB_APP_INVALID, "app invalid", o.getAbt(), dmsg)); // ADDCOMMENT aaron.song APP无效
             lr.setStatus(0, "app invalid").writeToLog(logService);
             return;
         }
