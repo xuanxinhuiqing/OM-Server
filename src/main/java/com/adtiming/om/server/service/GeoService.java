@@ -100,7 +100,7 @@ public class GeoService {
     }
 
     private String getClientIP(HttpServletRequest req) {
-    	LOG.debug("aaron.song ip Addr -> " + getIpAddr(req));
+//    	LOG.debug("aaron.song ip Addr -> " + getIpAddr(req));
 //        String clientIP = req.getHeader("X-Real-IP");
 //        if (clientIP == null) {
 //            clientIP = req.getRemoteAddr();
