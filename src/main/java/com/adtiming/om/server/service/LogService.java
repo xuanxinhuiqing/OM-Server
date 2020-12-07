@@ -82,7 +82,7 @@ public class LogService {
     /**
      * put log to aws s3 bucket hourly
      */
-    @Scheduled(cron = "0 2 * * * ?")
+    @Scheduled(cron = "0 5 * * * ?")
     public void awsS3Push() {
         if (!awsClient.isEnabled())
             return;
