@@ -36,15 +36,15 @@ public class InitResponse {
             d = 1;
 
         this.api = new API();
-        this.api.wf = "https://" + req.getReqHost() + "/wf";
-        this.api.lr = "https://" + req.getReqHost() + "/lr";
-        this.api.hb = "https://" + req.getReqHost() + "/hb";
-        this.api.ic = "https://" + req.getReqHost() + "/ic";
-        this.api.iap = "https://" + req.getReqHost() + "/iap";
-        this.api.er = "https://" + req.getReqHost() + "/err";
+        this.api.wf = "http://" + req.getReqHost() + "/wf";
+        this.api.lr = "http://" + req.getReqHost() + "/lr";
+        this.api.hb = "http://" + req.getReqHost() + "/hb";
+        this.api.ic = "http://" + req.getReqHost() + "/ic";
+        this.api.iap = "http://" + req.getReqHost() + "/iap";
+        this.api.er = "http://" + req.getReqHost() + "/err";
 
         events = new Events();
-        events.url = "https://" + req.getReqHost() + "/log";
+        events.url = "http://" + req.getReqHost() + "/log";
         List<Integer> eids = pubApp.getEventIds();
         if (eids.isEmpty()) {
             events.ids = REQUIRED_EVENT_IDS;
