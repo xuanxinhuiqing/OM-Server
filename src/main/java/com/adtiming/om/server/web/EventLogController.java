@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 public class EventLogController extends BaseController {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final Set<Integer> NEED_CONVERT_EID_SET = Stream.of(501, 502, 503).collect(Collectors.toSet());
+    private static final Set<Integer> NEED_CONVERT_EID_SET = Stream.of(501, 502, 503, 307, 309).collect(Collectors.toSet());
 
     @Resource
     private AppConfig cfg;
@@ -103,6 +103,8 @@ public class EventLogController extends BaseController {
             // CALLED_SHOW            501
             // CALLED_IS_READY_TRUE   502
             // CALLED_IS_READY_FALSE  503
+            // INSTANCE_VIDEO_START   307
+            // INSTANCE_VIDEO_COMPLETED 309
             if (NEED_CONVERT_EID_SET.contains(event.eid)) {
                 LrRequest lr = o.copyTo(new LrRequest());
                 lr.setType(event.eid);
